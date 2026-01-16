@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404 Not Found">
+  <div class="min-h-[70vh] flex flex-col items-center justify-center px-4 text-center">
+    <div class="relative mb-8">
+      <h1 class="text-9xl font-black text-gray-800/20 select-none">404</h1>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <span class="text-3xl md:text-5xl font-bold gradient-text">Lost in Space</span>
+      </div>
+    </div>
+    <p class="text-xl text-gray-400 mb-8 max-w-md mx-auto">
+      The page you're looking for has drifted away. Let's get you back to safety.
+    </p>
+    <a href="/" class="btn-primary px-8">
+      Return Home
+    </a>
+  </div>
+</Layout>

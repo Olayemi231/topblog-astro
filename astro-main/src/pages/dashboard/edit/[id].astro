@@ -1,0 +1,115 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getPostById } from '../../../lib/posts';
+
+const user = Astro.locals.user!;
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect('/dashboard?error=' + encodeURIComponent('Post not found'));
+}
+
+const post = await getPostById(id);
+
+if (!post) {
+  return Astro.redirect('/dashboard?error=' + encodeURIComponent('Post not found'));
+}
+
+// Check if user owns the post or is admin
+if (post.authorId !== user.id && user.role !== 'admin') {
+  return Astro.redirect('/dashboard?error=' + encodeURIComponent('You can only edit your own posts'));
+}
+
+const error = Astro.url.searchParams.get('error');
+---
+
+<Layout title={`Edit: ${post.title}`} description="Edit your blog post">
+  <div class="max-w-4xl mx-auto px-4 py-12">
+    <!-- Header -->
+    <div class="mb-8">
+      <a href="/dashboard" class="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Dashboard
+      </a>
+      <h1 class="text-3xl md:text-4xl font-bold text-white">
+        Edit <span class="gradient-text">Post</span>
+      </h1>
+    </div>
+
+    <!-- Error Message -->
+    {error && (
+      <div class="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400">
+        {error}
+      </div>
+    )}
+
+    <!-- Edit Form -->
+    <form action="/api/posts/update" method="POST" class="space-y-6">
+      <input type="hidden" name="postId" value={post.id} />
+      
+      <div class="card p-6 space-y-6">
+        <div>
+          <label for="title" class="label">Post Title</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            required
+            value={post.title}
+            class="input text-xl"
+          />
+        </div>
+
+        <div>
+          <label for="excerpt" class="label">
+            Short Excerpt 
+            <span class="text-gray-500 font-normal">(optional - auto-generated if empty)</span>
+          </label>
+          <textarea
+            id="excerpt"
+            name="excerpt"
+            rows="2"
+            class="input resize-none"
+          >{post.excerpt}</textarea>
+        </div>
+
+        <div>
+          <label for="content" class="label">Content</label>
+          <textarea
+            id="content"
+            name="content"
+            required
+            rows="15"
+            class="input resize-none font-mono"
+          >{post.content}</textarea>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <form action="/api/posts/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this post?')">
+          <input type="hidden" name="postId" value={post.id} />
+          <button type="submit" class="btn-danger">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Delete Post
+          </button>
+        </form>
+        
+        <div class="flex items-center gap-4">
+          <a href="/dashboard" class="btn-secondary">
+            Cancel
+          </a>
+          <button type="submit" class="btn-primary">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Update Post
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</Layout>

@@ -1,0 +1,122 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const error = Astro.url.searchParams.get('error');
+---
+
+<Layout title="Register" description="Create your TopBlog account">
+  <div class="min-h-[80vh] flex items-center justify-center px-4 py-16">
+    <div class="w-full max-w-md">
+      <div class="card p-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+          <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-lg shadow-primary-500/25">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+          </div>
+          <h1 class="text-3xl font-bold text-white mb-2">Create Account</h1>
+          <p class="text-gray-400">Join TopBlog and start writing</p>
+        </div>
+
+        <!-- Error Message -->
+        {error && (
+          <div class="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm">
+            {error}
+          </div>
+        )}
+
+        <!-- Register Form -->
+        <form id="register-form" action="/api/auth/register" method="POST" class="space-y-5">
+          <div>
+            <label for="name" class="label">Full Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              autocomplete="name"
+              placeholder="John Doe"
+              class="input"
+            />
+          </div>
+
+          <div>
+            <label for="email" class="label">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              autocomplete="email"
+              placeholder="you@example.com"
+              class="input"
+            />
+          </div>
+
+          <div>
+            <label for="password" class="label">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              minlength="8"
+              autocomplete="new-password"
+              placeholder="••••••••"
+              class="input"
+            />
+            <p class="mt-2 text-xs text-gray-500">Must be at least 8 characters</p>
+          </div>
+
+          <div>
+            <label for="confirmPassword" class="label">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              required
+              minlength="8"
+              autocomplete="new-password"
+              placeholder="••••••••"
+              class="input"
+            />
+          </div>
+
+          <button type="submit" class="btn-primary w-full py-3">
+            Create Account
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="relative my-8">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-700/50"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-4 bg-gray-900/50 text-gray-500">Already have an account?</span>
+          </div>
+        </div>
+
+        <!-- Login Link -->
+        <a href="/login" class="btn-secondary w-full py-3 text-center">
+          Sign In
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Client-side password validation
+  const form = document.getElementById('register-form') as HTMLFormElement;
+  const password = document.getElementById('password') as HTMLInputElement;
+  const confirmPassword = document.getElementById('confirmPassword') as HTMLInputElement;
+
+  form?.addEventListener('submit', (e) => {
+    if (password.value !== confirmPassword.value) {
+      e.preventDefault();
+      alert('Passwords do not match');
+    }
+  });
+</script>

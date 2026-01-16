@@ -1,0 +1,86 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const user = Astro.locals.user!;
+const error = Astro.url.searchParams.get('error');
+---
+
+<Layout title="New Post" description="Create a new blog post">
+  <div class="max-w-4xl mx-auto px-4 py-12">
+    <!-- Header -->
+    <div class="mb-8">
+      <a href="/dashboard" class="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Back to Dashboard
+      </a>
+      <h1 class="text-3xl md:text-4xl font-bold text-white">
+        Create <span class="gradient-text">New Post</span>
+      </h1>
+    </div>
+
+    <!-- Error Message -->
+    {error && (
+      <div class="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400">
+        {error}
+      </div>
+    )}
+
+    <!-- Post Form -->
+    <form action="/api/posts/create" method="POST" class="space-y-6">
+      <div class="card p-6 space-y-6">
+        <div>
+          <label for="title" class="label">Post Title</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            required
+            placeholder="Enter a compelling title..."
+            class="input text-xl"
+          />
+        </div>
+
+        <div>
+          <label for="excerpt" class="label">
+            Short Excerpt 
+            <span class="text-gray-500 font-normal">(optional - auto-generated if empty)</span>
+          </label>
+          <textarea
+            id="excerpt"
+            name="excerpt"
+            rows="2"
+            placeholder="A brief summary of your post..."
+            class="input resize-none"
+          ></textarea>
+        </div>
+
+        <div>
+          <label for="content" class="label">Content</label>
+          <textarea
+            id="content"
+            name="content"
+            required
+            rows="15"
+            placeholder="Write your post content here... You can use markdown for formatting."
+            class="input resize-none font-mono"
+          ></textarea>
+          <p class="mt-2 text-xs text-gray-500">Tip: Write engaging content that provides value to your readers.</p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-4">
+        <a href="/dashboard" class="btn-secondary">
+          Cancel
+        </a>
+        <button type="submit" class="btn-primary">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+          Publish Post
+        </button>
+      </div>
+    </form>
+  </div>
+</Layout>

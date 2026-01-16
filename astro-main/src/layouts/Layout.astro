@@ -1,0 +1,164 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'A modern blogging platform built with Astro' } = Astro.props;
+const user = Astro.locals.user;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <title>{title} | TopBlog</title>
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <!-- Background Effects -->
+    <div class="fixed inset-0 -z-10 overflow-hidden">
+      <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl animate-float"></div>
+      <div class="absolute top-1/3 right-1/4 w-80 h-80 bg-accent-500/20 rounded-full blur-3xl animate-float" style="animation-delay: 2s;"></div>
+      <div class="absolute bottom-1/4 left-1/3 w-72 h-72 bg-primary-600/10 rounded-full blur-3xl animate-float" style="animation-delay: 4s;"></div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="glass sticky top-0 z-50 border-b border-gray-800/50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo -->
+          <a href="/" class="flex items-center gap-2 group">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-lg shadow-primary-500/25 group-hover:shadow-primary-500/40 transition-shadow">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+            </div>
+            <span class="text-xl font-bold gradient-text">TopBlog</span>
+          </a>
+          
+          <!-- Navigation Links -->
+          <div class="hidden md:flex items-center gap-6">
+            <a href="/" class="text-gray-300 hover:text-white transition-colors">Home</a>
+            {user ? (
+              <>
+                <a href="/dashboard" class="text-gray-300 hover:text-white transition-colors">Dashboard</a>
+                {user.role === 'admin' && (
+                  <a href="/admin" class="text-gray-300 hover:text-white transition-colors">Admin</a>
+                )}
+              </>
+            ) : null}
+          </div>
+          
+          <!-- Auth Buttons -->
+          <div class="flex items-center gap-3">
+            {user ? (
+              <div class="flex items-center gap-4">
+                <div class="hidden sm:flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-sm font-bold text-white">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                  <span class="text-sm text-gray-300">{user.name}</span>
+                  {user.role === 'admin' && (
+                    <span class="px-2 py-0.5 text-xs bg-accent-500/20 text-accent-400 rounded-full border border-accent-500/30">Admin</span>
+                  )}
+                </div>
+                <form action="/api/auth/logout" method="POST">
+                  <button type="submit" class="btn-ghost text-sm">Logout</button>
+                </form>
+              </div>
+            ) : (
+              <>
+                <a href="/login" class="btn-ghost text-sm">Login</a>
+                <a href="/register" class="btn-primary text-sm">Sign Up</a>
+              </>
+            )}
+          </div>
+          
+          <!-- Mobile Menu Button -->
+          <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-400 hover:text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="hidden md:hidden border-t border-gray-800/50">
+        <div class="px-4 py-4 space-y-3">
+          <a href="/" class="block text-gray-300 hover:text-white transition-colors">Home</a>
+          {user ? (
+            <>
+              <a href="/dashboard" class="block text-gray-300 hover:text-white transition-colors">Dashboard</a>
+              {user.role === 'admin' && (
+                <a href="/admin" class="block text-gray-300 hover:text-white transition-colors">Admin</a>
+              )}
+            </>
+          ) : null}
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="flex-1">
+      <slot />
+    </main>
+    
+    <!-- Footer -->
+    <footer class="glass border-t border-gray-800/50 mt-auto">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <!-- Brand -->
+          <div class="md:col-span-2">
+            <a href="/" class="flex items-center gap-2 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </div>
+              <span class="text-xl font-bold gradient-text">TopBlog</span>
+            </a>
+            <p class="text-gray-400 max-w-sm">
+              A modern, fast, and beautiful blogging platform built with Astro, 
+              featuring server-side rendering and a clean design.
+            </p>
+          </div>
+          
+          <!-- Quick Links -->
+          <div>
+            <h3 class="text-white font-semibold mb-4">Quick Links</h3>
+            <ul class="space-y-2">
+              <li><a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+              <li><a href="/register" class="text-gray-400 hover:text-white transition-colors">Register</a></li>
+              <li><a href="/login" class="text-gray-400 hover:text-white transition-colors">Login</a></li>
+            </ul>
+          </div>
+          
+               
+        </div>
+        
+        <div class="border-t border-gray-800/50 mt-8 pt-8 text-center text-gray-500 text-sm">
+          <p>&copy; {new Date().getFullYear()} TopBlog. Built with ❤️ using Astro.</p>
+        </div>
+      </div>
+    </footer>
+    
+    <script>
+      // Mobile menu toggle
+      const menuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      menuBtn?.addEventListener('click', () => {
+        mobileMenu?.classList.toggle('hidden');
+      });
+    </script>
+  </body>
+</html>
